@@ -1,0 +1,288 @@
+---
+title: "FA1"
+author: "Frances Aneth Rosales"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    css: FA1.css
+
+---
+
+
+```{r files_insert}
+library(ggplot2)
+library(tidyr)
+library(broom)
+library(readxl)
+
+whrdata <- read_excel("C:\\Users\\asus\\Documents\\ALL FEU FILES\\FEU FOLDER 6\\LINEAR MODEL\\FA1\\WHR2023.xlsx")
+
+colnames(whrdata) <- c("Country_name", "Index", "Healthy_life_expectancy", "Freedom_to_make_life_choices", "Generosity", "Perceptions_of_corruption","Ladder_score_in_Dystopia","Log_GDP_per_capita")
+
+View(whrdata)
+```
+<br><br>
+
+# 1. Construct a SLM and try to assess the movement in the Happiness Index of a country if life expectancies at  birth changes
+```{r 1.1}
+happiness_vs_corruption <- lm(Index ~ Perceptions_of_corruption, data = whrdata)
+
+summary_corruption <- summary(happiness_vs_corruption)
+summary_corruption
+```
+<br><br>
+
+# 2. Determine the $\beta_{0}$ and the $\beta_{1}$
+```{r 1.2}
+beta0_corruption <- coef(happiness_vs_corruption)[1]
+print(paste("Beta0:", beta0_corruption))
+
+beta1_corruption <- coef(happiness_vs_corruption)[2]
+print(paste("Beta1:", beta1_corruption))
+```
+<br><br>
+
+# 3. Determine the variance of $\beta_{0}$ and the $\beta_{1}$
+```{r 1.3}
+
+var_beta0_corruption <- vcov(happiness_vs_corruption)[1, 1]
+print(paste("Variance of Beta0:", var_beta0_corruption))
+
+var_beta1_corruption <- vcov(happiness_vs_corruption)[2, 2]
+print(paste("Variance of Beta1:", var_beta1_corruption))
+
+```
+<br><br>
+
+# 4. Determine the mean value of $e_{i}$
+```{r 1.4}
+
+mean_residuals_corruption <- mean(residuals(happiness_vs_corruption))
+print(paste("Mean value of e_i:", mean_residuals_corruption))
+
+```
+<br><br>
+
+# 5. Determine the Coefficient of Determination
+```{r 1.5}
+r_squared_corruption <- summary_corruption$r.squared
+print(paste("Coefficient of Determination:", r_squared_corruption))
+
+```
+<br><br>
+
+# 6. Write the final SL Model
+```{r 1.6}
+
+
+finalmodel_corruption <- paste("Happiness Index vs Perception of Corruption =", round(beta0_corruption, 3), "+", round(beta1_corruption, 3), "* Perceptions of Corruption", "+",(mean_residuals_corruption) )
+
+print(paste(" Final SL Model: ", finalmodel_corruption))
+```
+
+<br><br>
+
+# 7. Explain the result of your model
+
+<h4>  
+
+$\beta_{0}$   <br>
+As we determine the $\beta_{0}$ accumulated <b> 7.7450 </b>, Since the Perception of Corruption is unlikely to be exactly zero in real-life circumstances, it may not have a clear practical interpretation.
+
+
+$\beta_{1}$ <br>
+Since this is the predicted shift in the Happiness Index in response to a rise of one unit in the perception of corruption. <br>
+In our situation, it is anticipated that the Happiness Index will drop by <b> 3.0400 </b> units for every unit that the Perception of Corruption rises.
+
+
+
+Therefore, the bad indication of shows a negative correlation between the Happiness Index and the Perception of Corruption. The Happiness Index tends to decrease when corruption occurs to happen.
+
+However, it is also needed to consider that the residual<b> standard error (1.009) </b> provides an indication of the normal residual size and a measure of the Happiness Index variability not explained by the Perception of Corruption.
+</h4>
+
+
+<br><br>
+
+# 8. Prepare some visualizations as part of your explanation
+```{r 1.8}
+library(ggplot2)
+library(cowplot)
+
+ggplot(whrdata, aes(x = Perceptions_of_corruption, y = Index)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "violet") +
+  labs(title = "Happiness Index vs Perceptions of Corruption",
+       x = "Perceptions of Corruption",
+       y = "Happiness Index",
+       caption = "Figure 1.1") +
+  theme(plot.caption = element_text(hjust = 0.5))  
+
+  
+```
+<h4>
+As assumed, the index of Happiness indeed decreases as the Perception of Corruption increases as shown in Figure 1.1.  
+</h4>
+
+
+
+<br><br>
+<br><br>
+
+# 1. Construct a SLM and try to assess the movement in the Happiness Index of a country if life expectancies at  birth changes
+```{r 2.1}
+happiness_vs_life_expectancy <- lm(Index ~ Healthy_life_expectancy, data = whrdata)
+summary_life_expectancy <- summary(happiness_vs_life_expectancy)
+summary_life_expectancy
+```
+<br><br>
+
+# 2. Determine the $\beta_{0}$ and the $\beta_{1}$
+```{r 2.2}
+beta0_life_expectancy <- coef(happiness_vs_life_expectancy)[1]
+beta1_life_expectancy <- coef(happiness_vs_life_expectancy)[2]
+print(paste("Beta0:", beta0_life_expectancy))
+print(paste("Beta1:", beta1_life_expectancy))
+```
+<br><br>
+
+# 3. Determine the variance of $\beta_{0}$ and the $\beta_{1}$
+```{r 2.3}
+
+var_beta0_life_expectancy <- vcov(happiness_vs_life_expectancy)[1, 1]
+var_beta1_life_expectancy <- vcov(happiness_vs_life_expectancy)[2, 2]
+print(paste("Variance of Beta0:", var_beta0_life_expectancy))
+print(paste("Variance of Beta1:", var_beta1_life_expectancy))
+
+```
+<br><br>
+
+# 4. Determine the mean value of $e_{i}$
+```{r 2.4}
+mean_residuals_life_expectancy <- mean(residuals(happiness_vs_life_expectancy))
+print(paste("Mean value of e_i:", mean_residuals_life_expectancy))
+
+```
+<br><br>
+
+# 5. Determine the Coefficient of Determination
+```{r 2.5}
+r_squared_life_expectancy <- summary_life_expectancy$r.squared
+print(paste("Coefficient of Determination:", r_squared_life_expectancy))
+
+```
+<br><br>
+
+# 6. Write the final SL Model
+```{r 2.6}
+final_model_life_expectancy <- paste("Happiness Index vs Life Expectancy =", round(beta0_life_expectancy, 3), "+", round(beta1_life_expectancy, 3), "* Healthy Life Expectancy ","+",(mean_residuals_life_expectancy) )
+print(paste(" Final SL Model ", final_model_life_expectancy))
+
+```
+
+<br><br>
+
+# 7. Explain the result of your model
+
+<h4>  
+
+$\beta_{0}$  <br>
+As we determine the $\beta_{0}$ accumulated <b> −4.09971 </b>, Since the Life Expectancy is also not possible to be exactly zero in real-life circumstances,interpreting data using Simple Linear Model would not be practical for this scenario.
+
+
+$\beta_{1}$ <br>
+This on the otherhand predicted the shifting of Happiness Index corresponds to the Life Expectancy from our Data Base. <br>
+We can now see as Happiness Index will increases by <b>  0.14845 </b> units whenever the Life Expectancy increases, then it pertains that the result has a correlates proportionally with the index. 
+
+Therefore, now we can see a good correlation of proportion increment of Life Expectancy and the Happiness Index. 
+
+However, just we assumed on our preceding assumption on Happiness Index vs Perception of Corruption, our data accumulated a <b> standard error of (0.7627) </b> thus we cannot also say that the Happiness Index has an indeed correlation between Life Expectancy.
+</h4>
+
+
+<br><br>
+
+# 8. Prepare some visualizations as part of your explanation
+```{r 2.8}
+library(ggplot2)
+library(cowplot)
+
+ggplot(whrdata, aes(x = Healthy_life_expectancy, y = Index)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "violet") +
+  labs(title = "Happiness Index vs Life Expectancy",
+       x = "Life Expectancy",
+       y = "Happiness Index",
+       caption = "Figure 2.1") +
+  theme(plot.caption = element_text(hjust = 0.5))
+```
+<h4>
+As assumed, the index of Happiness indeed increases as the Life Expectancy increases as shown in Figure 2.1.  
+</h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
